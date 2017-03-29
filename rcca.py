@@ -198,7 +198,7 @@ def predict(vdata, ws, cutoff = 1e-15):
         corrs.append(cs)
     return preds, corrs
 
-def kcca(data, reg = 0., numCC=None, kernelcca = True, ktype = "linear", gausigma = 1.0, degree = 2):
+def kcca(data, reg = 0., numCC=None, kernelcca = True, ktype = "gaussian", gausigma = 1.5, degree = 2):
     '''Set up and solve the eigenproblem for the data in kernel and specified reg
     '''
     if kernelcca:
