@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+
 """
 @version: ??
 @author: muyeby
 @contact: bxf_hit@163.com
 @site: http://muyeby.github.io
 @software: PyCharm
-@file: project_vectors.py
-@time: 17-3-29 上午9:28
+@file: KCCA_project_vectors.py
+@time: 17-3-29 下午10:32
 """
 import numpy as np
 from sklearn import preprocessing
-import rcca
+from PyKCCA import KCCA
+from PyKCCA.kernels import GaussianKernel
 
 datadir = "/home/jackbai/mywork/Git/KCCA-Experiment/data/"
 OutputDir="/home/jackbai/mywork/Git/KCCA-Experiment/Output/"
@@ -20,8 +22,8 @@ origForeignVecFile = datadir+"de-sample.txt"
 origEnVecFile = datadir+"en-sample.txt"
 subsetEnVecFile = datadir+"en_new_aligned.txt"
 subsetForeignVecFile = datadir+"de_new_aligned.txt"
-outputEnFile = OutputDir+"CCA_en_out.txt"
-outputForeignFile = OutputDir+"CCA_foreign_out.txt"
+outputEnFile = OutputDir+"KCCA_en_out.txt"
+outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
 
 def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=40):
     '''
@@ -51,15 +53,19 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
 
     '''训练CCA'''
-    num = [NUMCC]
-    regs = [1e-3,1e-2,1e-1]
-    cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.4)
-    cca.train([subsetEnVecs, subsetForeignVecs])
-    print cca.cancorrs
-    '''生成投影后的向量'''
-    tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
-    origEnVecsProjected = preprocessing.scale(tmpOutput[0])
-    origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
+    x1 = subsetEnVecs
+    x2 = subsetForeignVecs
+    kernel = GaussianKernel(sigma=1.0)
+    cca = KCCA(kernel, kernel,
+               regularization=1e-5,
+               decomp='full',
+               method='kettering_method',
+               scaler1=lambda x: x,
+               scaler2=lambda x: x).fit(x1, x2)
+    print cca.beta_
+    y1, y2 = cca.transform(origEnVecs, origForeignVecs)
+    origEnVecsProjected = preprocessing.scale(y1)
+    origForeignVecsProjected = preprocessing.scale(y2)
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%.5f",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%.5f",delimiter=' ')
     print "work over!"
