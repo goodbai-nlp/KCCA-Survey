@@ -23,7 +23,7 @@ test1 = data1[nSamples/2:]
 test2 = data2[nSamples/2:]
 
 # Create a cca object as an instantiation of the CCA object class. 
-cca = rcca.CCA(kernelcca = False, reg = 0., numCC = 2)
+cca = rcca.CCA(kernelcca = False, reg = 0., numCC = 3)
 
 # Use the train() method to find a CCA mapping between the two training sets.
 cca.train([train1, train2])

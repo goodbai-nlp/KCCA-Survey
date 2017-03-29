@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# encoding: utf-8
+# 代码二次注释 bxf_hit@163.com
 import numpy as np
 from scipy.linalg import eigh
 import h5py
@@ -33,6 +36,11 @@ class _CCABase(object):
         return self
 
     def validate(self, vdata):
+        '''
+        评估数据相关性
+        :param vdata: 测试数据
+        :return: 相关系数矩阵
+        '''
         vdata = [np.nan_to_num(_zscore(d)) for d in vdata]
         if not hasattr(self, 'ws'):
             raise NameError("Algorithm needs to be trained!")
@@ -95,9 +103,9 @@ class CCACrossValidate(_CCABase):
         verbose - True is default
 
     Results:
-        ws - canonical weights
-        comps - canonical components
-        cancorrs - correlations of the canonical components on the training dataset
+        ws - 投影变量矩阵
+        comps - 典型变量
+        cancorrs - 训练数据上的典型相关系数
         corrs - correlations on the validation dataset
         preds - predictions on the validation dataset
         ev - explained variance for each canonical dimension
@@ -202,6 +210,7 @@ def kcca(data, reg = 0., numCC=None, kernelcca = True, ktype = "linear", gausigm
     numCC = min([k.shape[1] for k in kernel]) if numCC is None else numCC
 
     # Get the kernel auto- and cross-covariance matrices
+    # 协方差矩阵/核矩阵
     if kernelcca:
         crosscovs = [np.dot(ki, kj.T) for ki in kernel for kj in kernel]
     else:
@@ -222,16 +231,16 @@ def kcca(data, reg = 0., numCC=None, kernelcca = True, ktype = "linear", gausigm
     RH = (RH+RH.T)/2.
 
     maxCC = LH.shape[0]
-
+    # 求特征值，特征向量；
     r, Vs = eigh(LH, RH, eigvals = (maxCC-numCC, maxCC-1))
     r[np.isnan(r)] = 0
-    rindex = np.argsort(r)[::-1]
+    rindex = np.argsort(r)[::-1] #特征值由大到小排列
     comp = []
     Vs = Vs[:, rindex]
     for i in range(len(kernel)):
         comp.append(Vs[int(np.sum(nFs[:i])):int(np.sum(nFs[:i+1])), :numCC])
     
-    return comp
+    return comp #特征向量矩阵
 
 def recon(data, comp, corronly=False, kernelcca = True):
     nT = data[0].shape[0]
@@ -239,9 +248,9 @@ def recon(data, comp, corronly=False, kernelcca = True):
     if kernelcca:
         ws = _listdot(data, comp)
     else:
-        ws = comp
-    ccomp = _listdot([d.T for d in data], ws)
-    corrs = _listcorr(ccomp)
+        ws = comp       # [Wx1,Wx2...Wx20,Wy1,Wy2....Wy20]
+    ccomp = _listdot([d.T for d in data], ws)   #变换过的典型变量
+    corrs = _listcorr(ccomp)    # 典型相关系数
     if corronly:
         return corrs
     else:

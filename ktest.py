@@ -31,3 +31,4 @@ cca.train([train1, train2])
 # Use the validate() method to test how well the CCA mapping generalizes to the test data.
 # For each dimension in the test data, correlations between predicted and actual data are computed.
 testcorrs = cca.validate([test1, test2])
+print testcorrs
