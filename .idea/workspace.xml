@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="08783b98-32a7-4b5b-932c-072024699788" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/project_vectors.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kcca_test.py" afterPath="$PROJECT_DIR$/kcca_test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/krcca_usage_example.ipynb" afterPath="$PROJECT_DIR$/krcca_usage_example.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ktest.py" afterPath="$PROJECT_DIR$/ktest.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rcca.py" afterPath="$PROJECT_DIR$/rcca.py" />
-    </list>
+    <list default="true" id="08783b98-32a7-4b5b-932c-072024699788" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,11 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="project_vectors.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="project_vectors.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project_vectors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="20" column="46" lean-forward="true" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
+            <state relative-caret-position="483">
+              <caret line="21" column="51" lean-forward="true" selection-start-line="21" selection-start-column="51" selection-end-line="21" selection-end-column="51" />
               <folding>
                 <element signature="e#202#220#0" expanded="true" />
               </folding>
@@ -59,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rcca.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="rcca.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rcca.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="32" column="55" lean-forward="false" selection-start-line="32" selection-start-column="51" selection-end-line="32" selection-end-column="55" />
+            <state relative-caret-position="-1771">
+              <caret line="25" column="29" lean-forward="true" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
               <folding>
                 <element signature="e#65#83#0" expanded="true" />
               </folding>
@@ -513,22 +507,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rcca.py">
+    <entry file="file://$PROJECT_DIR$/project_vectors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="32" column="55" lean-forward="false" selection-start-line="32" selection-start-column="51" selection-end-line="32" selection-end-column="55" />
+        <state relative-caret-position="483">
+          <caret line="21" column="51" lean-forward="true" selection-start-line="21" selection-start-column="51" selection-end-line="21" selection-end-column="51" />
           <folding>
-            <element signature="e#65#83#0" expanded="true" />
+            <element signature="e#202#220#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project_vectors.py">
+    <entry file="file://$PROJECT_DIR$/rcca.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="20" column="46" lean-forward="true" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
+        <state relative-caret-position="-1771">
+          <caret line="25" column="29" lean-forward="true" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
           <folding>
-            <element signature="e#202#220#0" expanded="true" />
+            <element signature="e#65#83#0" expanded="true" />
           </folding>
         </state>
       </provider>
