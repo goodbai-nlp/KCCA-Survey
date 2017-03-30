@@ -15,12 +15,15 @@ from sklearn import preprocessing
 from PyKCCA import KCCA
 from PyKCCA.kernels import GaussianKernel
 
-datadir = "/home/jackbai/mywork/Git/KCCA-Experiment/data/"
-OutputDir="/home/jackbai/mywork/Git/KCCA-Experiment/Output/"
-origForeignVecFile = datadir+"de-sample.txt"
-origEnVecFile = datadir+"en-sample.txt"
-subsetEnVecFile = datadir+"en_new_aligned.txt"
-subsetForeignVecFile = datadir+"de_new_aligned.txt"
+datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
+OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
+origForeignVecFile = "/home/xfbai/tmpvec/embeddings.fr"
+origForeignVecFileNew = "/home/xfbai/tmpvec/new_embeddings.fr"
+origEnVecFile = "/home/xfbai/tmpvec/embeddings.en"
+origEnVecFileNew = "/home/xfbai/tmpvec/new_embeddings.en"
+subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
+subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
+
 outputEnFile = OutputDir+"KCCA_en_out.txt"
 outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
 
@@ -66,9 +69,26 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     origEnVecsProjected = preprocessing.scale(y1)
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
     origForeignVecsProjected = preprocessing.scale(y2)
+    origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
     print "work over!"
+def Predeal(origFile,newFile):
+    file1 = open(origFile, 'rb')
+    file2 = open(newFile, 'wb')
+    i=0
+    if (file1):
+        for line in file1:
+            if i!=0:
+                tmp = line.strip()+"\n"
+                file2.write(tmp)
+            i+=1
+    else:
+        print "Failed to open"
+    file1.close()
+    file2.close()
 
 if __name__ == "__main__":
+    Predeal(origForeignVecFile, origForeignVecFileNew)
+    Predeal(origEnVecFile, origEnVecFileNew)
     project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile)
