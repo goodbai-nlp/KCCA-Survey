@@ -16,6 +16,7 @@ $word2vec/word2vec -train $corpus_en -window 5 -iter 10 -size 40 -threads 16 -ou
 # process fr
 export corpus_fr="/home/xfbai/corpus/monolingual/mono.tok.lc.fr"
 $word2vec/word2vec -train $corpus_fr -window 5 -iter 10 -size 40 -threads 16 -output $temp/embeddings.fr
-export corpus_fr="/home/xfbai/corpus/monolingual/mono.tok.lc.de"
-$word2vec/word2vec -train $corpus_fr -window 5 -iter 10 -size 40 -threads 16 -output $temp/embeddings.de
+# process de
+export corpus_de="/home/xfbai/corpus/monolingual/mono.tok.lc.de"
+$word2vec/word2vec -train $corpus_de -window 5 -iter 10 -size 40 -threads 16 -output $temp/embeddings.de
 printf '\n\b\b\b\b\b\b\b\b%s\n' `date +%T`

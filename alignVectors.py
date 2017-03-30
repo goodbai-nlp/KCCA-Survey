@@ -3,9 +3,8 @@ import argparse
 import numpy
 import gzip
 import math
-OutputDir = "/home/xfbai/mywork/git/KCCA-Experiment/data"
+
 ''' 提取字典里对应的词的双语的词向量，并正则化，输出为两个文件'''
-'''用法： python alignVectors.py -w1 ForiegnVecFile.txt -w2 EnVecFile.txt -a WordAlignFile -o OutFileFirstName'''
 def read_word_vectors(filename):
   wordVectors = {}
   if filename.endswith('.gz'): fileObject = gzip.open(filename, 'r')
@@ -24,12 +23,12 @@ def read_word_vectors(filename):
   return wordVectors
 
 def save_orig_subset_and_aligned(outFileName, lang2WordVectors, lang1AlignedVectors):
-  outFile = open(OutputDir+outFileName+'_en_new_aligned.txt','w') #英语
+  outFile = open(outFileName+'_orig_subset.txt','w')
   for word in lang1AlignedVectors:
     outFile.write(word+' '+' '.join([str(val) for val in lang2WordVectors[word]])+'\n')
   outFile.close()
   
-  outFile = open(OutputDir+outFileName+'_foreign_new_aligned.txt','w') #法语
+  outFile = open(outFileName+'_new_aligned.txt','w')
   for word in lang1AlignedVectors:
     outFile.write(word+' '+' '.join([str(val) for val in lang1AlignedVectors[word]])+'\n')
   outFile.close()
