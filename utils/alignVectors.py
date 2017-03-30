@@ -5,6 +5,7 @@ import gzip
 import math
 
 ''' 提取字典里对应的词的双语的词向量，并正则化，输出为两个文件'''
+'''用法： python alignVectors.py -w1 ForiegnVecFile.txt -w2 EnVecFile.txt -a WordAlignFile -o OutFileFirstName'''
 def read_word_vectors(filename):
   wordVectors = {}
   if filename.endswith('.gz'): fileObject = gzip.open(filename, 'r')
