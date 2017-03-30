@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-
 """
 @version: ??
 @author: muyeby
@@ -65,9 +64,10 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     print cca.beta_
     y1, y2 = cca.transform(origEnVecs, origForeignVecs)
     origEnVecsProjected = preprocessing.scale(y1)
+    origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
     origForeignVecsProjected = preprocessing.scale(y2)
-    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%.5f",delimiter=' ')
-    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%.5f",delimiter=' ')
+    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
     print "work over!"
 
 if __name__ == "__main__":
