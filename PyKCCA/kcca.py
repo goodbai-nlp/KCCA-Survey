@@ -159,7 +159,7 @@ class KCCA(object):
         alphas = alphas[:, ind]
         alpha = alphas[:, :n_components]
         
-        #alpha = alpha/numpy.linalg.norm(alpha)
+        alpha = alpha/numpy.linalg.norm(alpha)
         #making unit vectors
         alpha = alpha / (numpy.sum(numpy.abs(alpha)**2 ,axis=0)**(1./2))
         
@@ -205,11 +205,20 @@ class KCCA(object):
         #solve generalized eigenvalues problem
         betas, alphas = scipy.linalg.eig(R,D)
         ind = numpy.argsort(numpy.real(betas))
-        max_ind = ind[-1]
-        alpha = alphas[:, max_ind]
+        betas = betas[ind]
+        betas = betas[::-1]
+        n_samples = len(betas)
+        # fiding the components
+        if self.SSNUM < n_samples:
+            n_components = self.SSNUM
+        else:
+            # using all the dimensions
+            n_components = n_samples
+        alphas = alphas[:, ind]
+        alpha = alphas[:, :n_components]
         alpha = alpha/numpy.linalg.norm(alpha)
-        beta = numpy.real(betas[max_ind])
-        
+        # beta = [numpy.real(item) for item in betas]
+        beta = numpy.real(betas)
         N1 = G1.shape[1]
         alpha1 = alpha[:N1]
         alpha2 = alpha[N1:]
@@ -220,7 +229,7 @@ class KCCA(object):
         self.alpha1 = alpha1
         self.alpha2 = alpha2
         
-        return (y1, y2, beta)                
+        return (y1, y2, beta[:n_components])
     
     def fit(self, X1, X2):
 
@@ -238,8 +247,10 @@ class KCCA(object):
             (y1, y2, beta) = self.kcca(self.K1, self.K2)
         else:
             # get incompletely decomposed kernel matrices. K \approx G*G'
-            self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
-            self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)            
+            self.K1 = numpy.linalg.cholesky(self.kernel1(X1, X1))
+            self.K2 = numpy.linalg.cholesky(self.kernel2(X2,X2))
+            # self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
+            # self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)
             (y1, y2, beta) = self.icd(self.K1, self.K2)
 
         self.y1_ = y1
@@ -249,7 +260,6 @@ class KCCA(object):
     
     def transform(self, X1 = None, X2 = None):
         """
-        
         Features centering taken from:
         Scholkopf, B., Smola, A., & Muller, K. R. (1998).
         Nonlinear component analysis as a kernel eigenvalue problem.
@@ -301,7 +311,6 @@ class KCCA(object):
             
             res2 =  dot(K2, self.alpha2)
             rets.append(res2)
-            
         return rets
 
 def _mean_and_std(X, axis=0, with_mean=True, with_std=True):
