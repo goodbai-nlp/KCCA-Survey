@@ -27,7 +27,11 @@ import time
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
+<<<<<<< HEAD
+BaseDir="/home/xfbai/corpus/monolingual/"
+=======
 BaseDir="/home/jackbai/corpus/monolingual/"
+>>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
 OriginFile = ["mono.tok.lc.de","mono.tok.lc.en","mono.tok.lc.fr"]
 WordCountFile = "_WordCount.txt"
 def Count():

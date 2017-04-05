@@ -159,7 +159,7 @@ class KCCA(object):
         alphas = alphas[:, ind]
         alpha = alphas[:, :n_components]
         
-        alpha = alpha/numpy.linalg.norm(alpha)
+        # alpha = alpha/numpy.linalg.norm(alpha)
         #making unit vectors
         # alpha = alpha / (numpy.sum(numpy.abs(alpha)**2 ,axis=0)**(1./2))
         
@@ -194,7 +194,6 @@ class KCCA(object):
         D = numpy.r_[D1, D2]
         
         return (R, D)            
-    
     def icd(self, G1, G2):
         """Incomplete Cholesky decomposition
         """
@@ -249,8 +248,8 @@ class KCCA(object):
             # get incompletely decomposed kernel matrices. K \approx G*G'
             self.K1 = numpy.linalg.cholesky(self.kernel1(X1, X1))
             self.K2 = numpy.linalg.cholesky(self.kernel2(X2,X2))
-            # self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
-            # self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)
+	    #self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
+            #self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)            
             (y1, y2, beta) = self.icd(self.K1, self.K2)
 
         self.y1_ = y1

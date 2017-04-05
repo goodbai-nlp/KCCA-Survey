@@ -1,9 +1,11 @@
+#!/usr/bin/env python
+# encoding: utf-8
 import sys
 import argparse
 import numpy
 import gzip
 import math
-OutputDir = "/home/xfbai/mywork/git/KCCA-Experiment/data"
+OutputDir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 ''' 提取字典里对应的词的双语的词向量，并正则化，输出为两个文件'''
 '''用法： python alignVectors.py -w1 ForiegnVecFile.txt -w2 EnVecFile.txt -a WordAlignFile -o OutFileFirstName'''
 def read_word_vectors(filename):
@@ -37,13 +39,15 @@ def save_orig_subset_and_aligned(outFileName, lang2WordVectors, lang1AlignedVect
 def get_aligned_vectors(wordAlignFile, lang1WordVectors, lang2WordVectors):
   alignedVectors = {}
   lenLang1Vector = len(lang1WordVectors[lang1WordVectors.keys()[0]])
+  i=0
   for line in open(wordAlignFile, 'r'):
-    lang1Word, lang2Word = line.strip().split(" ||| ")
-    if lang2Word not in lang2WordVectors: continue
-    if lang1Word not in lang1WordVectors: continue
-    alignedVectors[lang2Word] = numpy.zeros(lenLang1Vector, dtype=float)
-    alignedVectors[lang2Word] += lang1WordVectors[lang1Word]
-
+    if i%100==0:   #样本太大，分批训练
+    	lang1Word, lang2Word = line.strip().split(" ||| ")
+    	if lang2Word not in lang2WordVectors: continue
+    	if lang1Word not in lang1WordVectors: continue
+    	alignedVectors[lang2Word] = numpy.zeros(lenLang1Vector, dtype=float)
+    	alignedVectors[lang2Word] += lang1WordVectors[lang1Word]
+    i+=1
   sys.stderr.write("No. of aligned vectors found: "+str(len(alignedVectors))+'\n')      
   return alignedVectors
 

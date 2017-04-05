@@ -11,6 +11,7 @@
 @time: 17-3-29 下午10:32
 """
 import numpy as np
+import time
 from sklearn import preprocessing
 from PyKCCA import KCCA
 from PyKCCA.kernels import GaussianKernel
@@ -24,12 +25,11 @@ origForeignVecFileNew = "/home/xfbai/tmpvec/new_embeddings.fr"
 origEnVecFile = "/home/xfbai/tmpvec/embeddings.en"
 origEnVecFileNew = "/home/xfbai/tmpvec/new_embeddings.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
-subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
-
+subsetForeignVecFile = datadir+"Out_foreign_new_aligneForeignWordCount
 outputEnFile = OutputDir+"KCCA_en_out.txt"
 outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
 
-def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=40):
+def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=20):
     '''
     将词典的向量输入到KCCA中，生成投影向量，再生成双语向量
     :param origForeignVecFile: 外语向量矩阵
@@ -60,13 +60,14 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     kernel = GaussianKernel(sigma=1.0)
+    # kernel = DiagGaussianKernel()
     cca = KCCA(kernel, kernel,
                regularization=1e-5,
                decomp='icd',
                method='simplified_hardoon_method',
                scaler1=lambda x: x,
                scaler2=lambda x: x,
-               SSnum=NUMCC).fit(x1, x2)
+	       SSnum=NUMCC).fit(x1, x2)
     print cca.beta_
     y1, y2 = cca.transform(origEnVecs, origForeignVecs)
     origEnVecsProjected = preprocessing.scale(y1)
@@ -75,8 +76,8 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
-    print "work over!"
-def Predeal(origFile,newFile):
+    print "Work Finished"
+def Predeal(origFile,newFile,wordCountFile):
     file1 = open(origFile, 'rb')
     file2 = open(newFile, 'wb')
     i=0
@@ -92,6 +93,10 @@ def Predeal(origFile,newFile):
     file2.close()
 
 if __name__ == "__main__":
-    Predeal(origForeignVecFile, origForeignVecFileNew)
-    Predeal(origEnVecFile, origEnVecFileNew)
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,20)
+    print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    Predeal(origForeignVecFile, origForeignVecFileNew,ForeignWordCount)
+    Predeal(origEnVecFile, origEnVecFileNew,EnWordCount)
+    print "predeal complete!"
+    print "training model..."
+    project_vectors(origForeignVecFileNew, origEnVecFileNew, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,40)
+    print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
