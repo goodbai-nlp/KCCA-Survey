@@ -161,7 +161,7 @@ class KCCA(object):
         
         alpha = alpha/numpy.linalg.norm(alpha)
         #making unit vectors
-        alpha = alpha / (numpy.sum(numpy.abs(alpha)**2 ,axis=0)**(1./2))
+        # alpha = alpha / (numpy.sum(numpy.abs(alpha)**2 ,axis=0)**(1./2))
         
         alpha1 = alpha[:N, :]
         alpha2 = alpha[N:, :]
@@ -216,7 +216,7 @@ class KCCA(object):
             n_components = n_samples
         alphas = alphas[:, ind]
         alpha = alphas[:, :n_components]
-        alpha = alpha/numpy.linalg.norm(alpha)
+        # alpha = alpha/numpy.linalg.norm(alpha)
         # beta = [numpy.real(item) for item in betas]
         beta = numpy.real(betas)
         N1 = G1.shape[1]

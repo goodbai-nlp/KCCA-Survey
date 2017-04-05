@@ -18,7 +18,7 @@ def read_word_vectors(filename):
     for index, vecVal in enumerate(line.split()[1:]):
       wordVectors[word][index] = float(vecVal)        
     ''' normalize weight vector '''
-    wordVectors[word] /= math.sqrt((wordVectors[word]**2).sum() + 1e-6)
+    # wordVectors[word] /= math.sqrt((wordVectors[word]**2).sum() + 1e-6)
             
   sys.stderr.write("Vectors read from: "+filename+" \n")
   return wordVectors

@@ -37,7 +37,6 @@ class GaussianKernel(object):
         Find kernel evaluation between two matrices X1 and X2 whose rows are
         examples and have an identical number of columns.
 
-
         :param X1: First set of examples.
         :type X1: :class:`numpy.ndarray`
 

@@ -14,6 +14,8 @@ import numpy as np
 from sklearn import preprocessing
 from PyKCCA import KCCA
 from PyKCCA.kernels import GaussianKernel
+from PyKCCA.kernels import DiagGaussianKernel
+from PyKCCA.kernels import PolyKernel
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
@@ -60,10 +62,11 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     kernel = GaussianKernel(sigma=1.0)
     cca = KCCA(kernel, kernel,
                regularization=1e-5,
-               decomp='full',
-               method='kettering_method',
+               decomp='icd',
+               method='simplified_hardoon_method',
                scaler1=lambda x: x,
-               scaler2=lambda x: x).fit(x1, x2)
+               scaler2=lambda x: x,
+               SSnum=NUMCC).fit(x1, x2)
     print cca.beta_
     y1, y2 = cca.transform(origEnVecs, origForeignVecs)
     origEnVecsProjected = preprocessing.scale(y1)
@@ -91,4 +94,4 @@ def Predeal(origFile,newFile):
 if __name__ == "__main__":
     Predeal(origForeignVecFile, origForeignVecFileNew)
     Predeal(origEnVecFile, origEnVecFileNew)
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile)
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,20)

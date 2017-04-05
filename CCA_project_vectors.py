@@ -17,7 +17,9 @@ import rcca
 datadir = "/home/jackbai/mywork/Git/KCCA-Experiment/data/"
 OutputDir="/home/jackbai/mywork/Git/KCCA-Experiment/Output/"
 origForeignVecFile = datadir+"de-sample.txt"
+origForeignVecFileNew = datadir+"new_de-sample.txt"
 origEnVecFile = datadir+"en-sample.txt"
+origEnVecFileNew = datadir+"new_en-sample.txt"
 subsetEnVecFile = datadir+"en_new_aligned.txt"
 subsetForeignVecFile = datadir+"de_new_aligned.txt"
 outputEnFile = OutputDir+"CCA_en_out.txt"
@@ -35,6 +37,7 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     :param truncRatio: 模型的训练系数
     '''
     '''数据读入，处理掉开头的英文单词，只保留词向量'''
+
     tmp = np.loadtxt(origEnVecFile,dtype=np.str,delimiter=' ')
     origEnVecs = tmp[:,1:].astype(np.float)
     tmp2 = np.loadtxt(origForeignVecFile, dtype=np.str, delimiter=' ')
@@ -53,16 +56,33 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     '''训练CCA'''
     num = [NUMCC]
     regs = [1e-3,1e-2,1e-1]
-    cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.4)
+    cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.1)
     cca.train([subsetEnVecs, subsetForeignVecs])
     print cca.cancorrs
     '''生成投影后的向量'''
     tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
     origEnVecsProjected = preprocessing.scale(tmpOutput[0])
+    origEnVecsProjected = np.column_stack((tmp[:, :1], origEnVecsProjected.astype(np.str)))
     origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
-    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%.5f",delimiter=' ')
-    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%.5f",delimiter=' ')
+    origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
+    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
     print "work over!"
-
+def Predeal(origFile,newFile):
+    file1 = open(origFile, 'rb')
+    file2 = open(newFile, 'wb')
+    i=0
+    if (file1):
+        for line in file1:
+            if i!=0:
+                tmp = line.strip()+"\n"
+                file2.write(tmp)
+            i+=1
+    else:
+        print "Failed to open"
+    file1.close()
+    file2.close()
 if __name__ == "__main__":
+    Predeal(origForeignVecFile,origForeignVecFileNew)
+    Predeal(origEnVecFile,origEnVecFileNew)
     project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile)
