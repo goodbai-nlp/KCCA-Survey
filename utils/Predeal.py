@@ -20,16 +20,19 @@ OutPutDir = ""
 def Predeal(originFile,wordCountFile,newFile):
     wordDict = {}
     for line in open(wordCountFile):
-        key,value = line.strip().split(':')
-        wordDict[key]=int(value)
+        if len(line.strip().split(':'))==2:
+            key,value = line.strip().split(':')
+            wordDict[key]=int(value)
     file1 = open(originFile, 'rb')
     file2 = open(newFile, 'wb')
     i=0
     if (file1):
+	print "start generate new vector file...\n"
         for line in file1:
             if i!=0:
                 tmp = line.strip().split(' ')
-                if (tmp[0] in wordDict.keys() and wordDict[tmp[0]]>5):
+	#	print tmp[0],
+                if (wordDict.has_key(tmp[0]) and wordDict[tmp[0]]>5):
                     ttmp = line.strip()+"\n"
                     file2.write(ttmp)
             i+=1
@@ -46,4 +49,5 @@ if __name__ == '__main__':
     parser.add_argument("-w2", "--wordCountFile", type=str, help="Word Count file")
     parser.add_argument("-o", "--outputfile", type=str, help="Output file for predealed vectors")
     args = parser.parse_args()
+    print "Do some predeal works\n"
     Predeal(args.originFile,args.wordCountFile,args.outputfile)

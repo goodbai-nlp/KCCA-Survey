@@ -246,10 +246,10 @@ class KCCA(object):
             (y1, y2, beta) = self.kcca(self.K1, self.K2)
         else:
             # get incompletely decomposed kernel matrices. K \approx G*G'
-            self.K1 = numpy.linalg.cholesky(self.kernel1(X1, X1))
-            self.K2 = numpy.linalg.cholesky(self.kernel2(X2,X2))
-	    #self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
-            #self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)            
+            #self.K1 = numpy.linalg.cholesky(self.kernel1(X1, X1))
+            #self.K2 = numpy.linalg.cholesky(self.kernel2(X2,X2))
+	    self.K1 = kernel_icd(X1, self.kernel1,  self.lrank)
+            self.K2 = kernel_icd(X2, self.kernel2,  self.lrank)            
             (y1, y2, beta) = self.icd(self.K1, self.K2)
 
         self.y1_ = y1

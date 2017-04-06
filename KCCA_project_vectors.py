@@ -12,6 +12,7 @@
 """
 import numpy as np
 import time
+import commands
 from sklearn import preprocessing
 from PyKCCA import KCCA
 from PyKCCA.kernels import GaussianKernel
@@ -20,12 +21,10 @@ from PyKCCA.kernels import PolyKernel
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-origForeignVecFile = "/home/xfbai/tmpvec/embeddings.fr"
-origForeignVecFileNew = "/home/xfbai/tmpvec/new_embeddings.fr"
-origEnVecFile = "/home/xfbai/tmpvec/embeddings.en"
-origEnVecFileNew = "/home/xfbai/tmpvec/new_embeddings.en"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.fr"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
-subsetForeignVecFile = datadir+"Out_foreign_new_aligneForeignWordCount
+subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 outputEnFile = OutputDir+"KCCA_en_out.txt"
 outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
 
@@ -53,50 +52,41 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     '''预处理，使每行正则化'''
     origEnVecs=preprocessing.scale(origEnVecs)
     origForeignVecs=preprocessing.scale(origForeignVecs)
-    subsetEnVecs = preprocessing.scale(subsetEnVecs)
-    subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
+    #subsetEnVecs = preprocessing.scale(subsetEnVecs)
+    #subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
 
     '''训练CCA'''
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
-    kernel = GaussianKernel(sigma=1.0)
-    # kernel = DiagGaussianKernel()
-    cca = KCCA(kernel, kernel,
-               regularization=1e-5,
-               decomp='icd',
-               method='simplified_hardoon_method',
-               scaler1=lambda x: x,
-               scaler2=lambda x: x,
-	       SSnum=NUMCC).fit(x1, x2)
-    print cca.beta_
-    y1, y2 = cca.transform(origEnVecs, origForeignVecs)
-    origEnVecsProjected = preprocessing.scale(y1)
-    origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    origForeignVecsProjected = preprocessing.scale(y2)
-    origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
-    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
-    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+    resDict={}
+    for i in range(1,25):
+        for j in range(1,25):
+	    for k in range(1,5):
+    		kernel1 = GaussianKernel(float(i))
+    		kernel2 = GaussianKernel(float(j))
+    #kernel = DiagGaussianKernel()
+    		cca = KCCA(kernel1, kernel2,
+               		regularization=10**-k,
+               		decomp='full',
+               		method='kettering_method',
+               		scaler1=lambda x: x,
+               		scaler2=lambda x: x,
+	       		SSnum=NUMCC).fit(x1, x2)
+    		print "sigma1=",i,"sigma2=",j,"regularization=",10**-k,cca.beta_
+    		y1, y2 = cca.transform(origEnVecs, origForeignVecs)
+    		origEnVecsProjected = preprocessing.scale(y1)
+    		origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
+    		origForeignVecsProjected = preprocessing.scale(y2)
+    		origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
+    		np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    		np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+		a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
+		print b
+		resDict[(i,j,k)]=b
     print "Work Finished"
-def Predeal(origFile,newFile,wordCountFile):
-    file1 = open(origFile, 'rb')
-    file2 = open(newFile, 'wb')
-    i=0
-    if (file1):
-        for line in file1:
-            if i!=0:
-                tmp = line.strip()+"\n"
-                file2.write(tmp)
-            i+=1
-    else:
-        print "Failed to open"
-    file1.close()
-    file2.close()
 
 if __name__ == "__main__":
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-    Predeal(origForeignVecFile, origForeignVecFileNew,ForeignWordCount)
-    Predeal(origEnVecFile, origEnVecFileNew,EnWordCount)
-    print "predeal complete!"
     print "training model..."
-    project_vectors(origForeignVecFileNew, origEnVecFileNew, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,40)
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,40)
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))

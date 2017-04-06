@@ -14,16 +14,13 @@ import numpy as np
 from sklearn import preprocessing
 import rcca
 
-<<<<<<< HEAD
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-origForeignVecFile = "/home/xfbai/tmpvec/embeddings.fr"
-origForeignVecFileNew = "/home/xfbai/tmpvec/new_embeddings.fr"
-origEnVecFile = "/home/xfbai/tmpvec/embeddings.en"
-origEnVecFileNew = "/home/xfbai/tmpvec/new_embeddings.en"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.fr"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
-=======
+'''
 datadir = "/home/jackbai/mywork/Git/KCCA-Experiment/data/"
 OutputDir="/home/jackbai/mywork/Git/KCCA-Experiment/Output/"
 origForeignVecFile = datadir+"de-sample.txt"
@@ -33,6 +30,7 @@ origEnVecFileNew = datadir+"new_en-sample.txt"
 subsetEnVecFile = datadir+"en_new_aligned.txt"
 subsetForeignVecFile = datadir+"de_new_aligned.txt"
 >>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
+'''
 outputEnFile = OutputDir+"CCA_en_out.txt"
 outputForeignFile = OutputDir+"CCA_foreign_out.txt"
 
@@ -73,48 +71,13 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     '''生成投影后的向量'''
     tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
     origEnVecsProjected = preprocessing.scale(tmpOutput[0])
-<<<<<<< HEAD
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-=======
-    origEnVecsProjected = np.column_stack((tmp[:, :1], origEnVecsProjected.astype(np.str)))
->>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
     origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
     print "work over!"
-<<<<<<< HEAD
 
-def Predeal(origFile,newFile):
-    file1 = open(origFile, 'rb')
-    file2 = open(newFile, 'wb')
-    if (file1):
-        i=0
-        for line in file1:
-	    if i!=0:
-            	tmp = line.strip()+"\n"
-            	file2.write(tmp)
-=======
-def Predeal(origFile,newFile):
-    file1 = open(origFile, 'rb')
-    file2 = open(newFile, 'wb')
-    i=0
-    if (file1):
-        for line in file1:
-            if i!=0:
-                tmp = line.strip()+"\n"
-                file2.write(tmp)
->>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
-            i+=1
-    else:
-        print "Failed to open"
-    file1.close()
-    file2.close()
 if __name__ == "__main__":
-    Predeal(origForeignVecFile,origForeignVecFileNew)
-    Predeal(origEnVecFile,origEnVecFileNew)
-<<<<<<< HEAD
-    project_vectors(origForeignVecFileNew, origEnVecFileNew, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile)
-=======
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile)
->>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
+
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,40)
