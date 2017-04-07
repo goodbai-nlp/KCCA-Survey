@@ -27,6 +27,7 @@ subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 outputEnFile = OutputDir+"KCCA_en_out.txt"
 outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
+paramFile = OutputDir+"param.txt"
 
 def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=20):
     '''
@@ -54,12 +55,13 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     origForeignVecs=preprocessing.scale(origForeignVecs)
     #subsetEnVecs = preprocessing.scale(subsetEnVecs)
     #subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
-
+  
     '''训练CCA'''
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     resDict={}
-    for i in range(1,25):
+    #ff = open(paramFile,'wb')
+    for i in range(4,25):
         for j in range(1,25):
 	    for k in range(1,5):
     		kernel1 = GaussianKernel(float(i))
@@ -82,7 +84,10 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     		np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
 		a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
 		print b
-		resDict[(i,j,k)]=b
+		ff = open(paramFile,'a')
+		ttmpstr = str((i,j,k))+b+"\n"
+		ff.write(ttmpstr)
+   		ff.close()
     print "Work Finished"
 
 if __name__ == "__main__":
