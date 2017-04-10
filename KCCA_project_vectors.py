@@ -14,7 +14,8 @@ import numpy as np
 import time
 import commands
 from sklearn import preprocessing
-from PyKCCA import KCCA
+# from PyKCCA import KCCA
+from myKcca import KCCA
 from PyKCCA.kernels import GaussianKernel
 from PyKCCA.kernels import DiagGaussianKernel
 from PyKCCA.kernels import PolyKernel
@@ -60,34 +61,54 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     resDict={}
-    #ff = open(paramFile,'wb')
-    for i in range(4,25):
-        for j in range(1,25):
-	    for k in range(1,5):
-    		kernel1 = GaussianKernel(float(i))
-    		kernel2 = GaussianKernel(float(j))
+    '''paramSet=[(18,10),(19,4),(19,6),(20,1),(20,5),(20,7),(20,8),(20,9),(21,2),(21,4	),(21,6),(21,9),(22,6),(22,7),(23,6),(23,8),(24,2),(24,5),(24,6),(24,7),(24,8)		,(24,9)]
+    for i ,j in paramSet:
+    	for k in range(1,10,2):
+	    kernel1 = GaussianKernel(float(i))
+            kernel2 = GaussianKernel(float(j))
     #kernel = DiagGaussianKernel()
-    		cca = KCCA(kernel1, kernel2,
-               		regularization=10**-k,
+    	    cca = KCCA(kernel1, kernel2,
+               		regularization=k/10.0,
                		decomp='full',
                		method='kettering_method',
                		scaler1=lambda x: x,
                		scaler2=lambda x: x,
 	       		SSnum=NUMCC).fit(x1, x2)
-    		print "sigma1=",i,"sigma2=",j,"regularization=",10**-k,cca.beta_
-    		y1, y2 = cca.transform(origEnVecs, origForeignVecs)
-    		origEnVecsProjected = preprocessing.scale(y1)
-    		origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    		origForeignVecsProjected = preprocessing.scale(y2)
-    		origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
-    		np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
-    		np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
-		a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
-		print b
-		ff = open(paramFile,'a')
-		ttmpstr = str((i,j,k))+b+"\n"
-		ff.write(ttmpstr)
-   		ff.close()
+    	    print "sigma1=",i,"sigma2=",j,"regularization=",k/10.0,cca.beta_
+    	    y1, y2 = cca.transform(origEnVecs, origForeignVecs)
+    	    origEnVecsProjected = preprocessing.scale(y1)
+    	    origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
+    	    origForeignVecsProjected = preprocessing.scale(y2)
+    	    origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
+    	    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    	    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+	    a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
+	    print b
+	    ff = open(paramFile,'a')
+	    ttmpstr = str((i,j,k))+b+"\n"
+	    ff.write(ttmpstr)
+   	    ff.close()
+     '''
+    for i in range(1,6):
+	for j in range(1,6):
+		for k in range(1,100,10):
+    			kcca =KCCA('rbf','rbf',regularization=k/100.0,gamma1=10**-i,gamma2=10**-j,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
+    			print kcca.corrs
+    			y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
+    			origEnVecsProjected = preprocessing.scale(y1)
+    			origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
+    			origForeignVecsProjected = preprocessing.scale(y2)
+    			origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
+    			np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    			np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+    			a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
+			ff = open(paramFile,'a')
+ 	                ttmpstr = str((10**-i,10**-j,k/100.0))+' '+b+"\n"
+		        ff.write(ttmpstr)
+    			print b
+			ff.close()
+			
+
     print "Work Finished"
 
 if __name__ == "__main__":
