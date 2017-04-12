@@ -22,8 +22,8 @@ from PyKCCA.kernels import PolyKernel
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.fr"
-origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size80.fr"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size80.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 outputEnFile = OutputDir+"KCCA_en_out.txt"
@@ -89,25 +89,24 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
 	    ff.write(ttmpstr)
    	    ff.close()
      '''
-    for i in range(1,6):
-	for j in range(1,6):
-		for k in range(1,100,10):
-    			kcca =KCCA('rbf','rbf',regularization=k/100.0,gamma1=10**-i,gamma2=10**-j,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
-    			print kcca.corrs
-    			y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
-    			origEnVecsProjected = preprocessing.scale(y1)
-    			origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    			origForeignVecsProjected = preprocessing.scale(y2)
-    			origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
-    			np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
-    			np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
-    			a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
-			ff = open(paramFile,'a')
- 	                ttmpstr = str((10**-i,10**-j,k/100.0))+' '+b+"\n"
-		        ff.write(ttmpstr)
-    			print b
-			ff.close()
-			
+    #for i in range(1,7):
+	#for j in range(1,7):
+		#for k in range(1,100,20):
+    kcca =KCCA('rbf','rbf',regularization=0.1,gamma1=0.001,gamma2=0.001,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
+    		#	print kcca.corrs
+    y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
+    origEnVecsProjected = preprocessing.scale(y1)
+    origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
+    origForeignVecsProjected = preprocessing.scale(y2)
+    origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
+    np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+    np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+    a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/qvec/qvec_cca2.py')
+    			#ff = open(paramFile,'a')
+    			#ttmpstr = str((10**-i,10**-j,k/100.0))+' '+b+"\n"
+    			#ff.write(ttmpstr)
+    print b
+    			#ff.close()	
 
     print "Work Finished"
 
