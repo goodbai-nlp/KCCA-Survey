@@ -10,6 +10,7 @@ mkdir $temp
 # rm $output_embeddings
 printf '\n\b\b\b\b\b\b\b\b%s\n' `date +%T`
 # process en
+:`
 export corpus_en="/home/xfbai/corpus/monolingual/mono.tok.lc.en"
 $word2vec/word2vec -train $corpus_en -window 5 -iter 10 -size 80 -threads 16 -output $temp/embeddings_size80.en
 python $utils/Count.py -w1 $corpus_en -o $temp/en_wordCount.txt
@@ -19,9 +20,18 @@ export corpus_fr="/home/xfbai/corpus/monolingual/mono.tok.lc.fr"
 $word2vec/word2vec -train $corpus_fr -window 5 -iter 10 -size 80 -threads 16 -output $temp/embeddings_size80.fr
 python $utils/Count.py -w1 $corpus_fr -o $temp/fr_wordCount.txt
 python $utils/Predeal.py -w1 $temp/embeddings_size80.fr -w2 $temp/fr_wordCount.txt -o $temp/new_embedding_size80.fr
+`
 # process de
 export corpus_de="/home/xfbai/corpus/monolingual/mono.tok.lc.de"
-$word2vec/word2vec -train $corpus_de -window 5 -iter 10 -size 80 -threads 16 -output $temp/embeddings_size80.de
+$word2vec/word2vec -train $corpus_de -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.de
 python $utils/Count.py -w1 $corpus_de -o $temp/de_wordCount.txt
-python $utils/Predeal.py -w1 $temp/embeddings_size80.de -w2 $temp/de_wordCount.txt -o $temp/new_embedding_size80.de
+python $utils/Predeal.py -w1 $temp/embeddings_size200.de -w2 $temp/de_wordCount.txt -o $temp/new_embedding_size200.de
+
+export corpus_zh="/home/xfbai/corpus/monolingual/mono.tok.lc.zh"
+$word2vec/word2vec -train $corpus_zh -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.zh
+python $utils/Count.py -w1 $corpus_zh -o $temp/zh_wordCount.txt
+python $utils/Predeal.py -w1 $temp/embeddings_size200.zh -w2 $temp/zh_wordCount.txt -o $temp/new_embedding_size200.zh
+
+
+
 printf '\n\b\b\b\b\b\b\b\b%s\n' `date +%T`

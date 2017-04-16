@@ -16,8 +16,9 @@ import rcca
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size80.fr"
-origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size80.en"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 '''
@@ -80,4 +81,4 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
 
 if __name__ == "__main__":
 
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,40)
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,100)
