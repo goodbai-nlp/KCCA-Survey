@@ -23,7 +23,7 @@ def read_word_vectors(filename,wordCountFile):
   for lineNum, line in enumerate(fileObject):
     line = line.strip().lower()
     word = line.split()[0]
-    if(wordDict.has_key(word) and wordDict[word]>300):
+    if(wordDict.has_key(word) and wordDict[word]>100):
   	wordVectors[word] = numpy.zeros(len(line.split())-1, dtype=float)
   	for index, vecVal in enumerate(line.split()[1:]):
     		wordVectors[word][index] = float(vecVal)
