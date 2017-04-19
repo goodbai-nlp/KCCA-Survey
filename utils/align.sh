@@ -18,4 +18,4 @@ export FiWord="/home/xfbai/tmpvec/fi_wordCount.txt"
 export HuWord="/home/xfbai/tmpvec/hu_wordCount.txt"
 set -e
 echo "Aligning vectors..."
-python alignVectors.py -w1 $Fivec -w2 $Envec -w3 $FiWord -w4 $EnWord -a $Fidict -o Out
+python alignVectors.py -w1 $Huvec -w2 $Envec -w3 $HuWord -w4 $EnWord -a $Hudict -o Out

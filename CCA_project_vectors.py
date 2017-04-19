@@ -11,13 +11,17 @@
 @time: 17-3-29 上午9:28
 """
 import numpy as np
+import time
 from sklearn import preprocessing
-import rcca
+from sklearn.cross_decomposition import CCA
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
 origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
@@ -37,7 +41,7 @@ outputForeignFile = OutputDir+"CCA_foreign_out.txt"
 
 def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=40):
     '''
-    将词典的向量输入到KCCA中，生成投影向量，再生成双语向量
+    将词典的向量输入到CCA中，生成投影向量，再生成双语向量
     :param origForeignVecFile: 外语向量矩阵
     :param origEnVecFile: 英语向量矩阵
     :param subsetEnVecFile: 词典中的英语向量矩阵
@@ -64,21 +68,24 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
 
     '''训练CCA'''
-    num = [NUMCC]
-    regs = [1e-3,1e-2,1e-1]
-    cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.1)
-    cca.train([subsetEnVecs, subsetForeignVecs])
-    print cca.cancorrs
+    cca = CCA(n_components=NUMCC)
+    cca.fit(subsetEnVecs, subsetForeignVecs)
+    print cca.get_params()
+    X_c, Y_c = cca.transform(origEnVecs, origForeignVecs)
     '''生成投影后的向量'''
-    tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
-    origEnVecsProjected = preprocessing.scale(tmpOutput[0])
+    #tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
+    #origEnVecsProjected = preprocessing.scale(tmpOutput[0])
+    origEnVecsProjected = preprocessing.scale(X_c)
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
+    #origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
+    origForeignVecsProjected = preprocessing.scale(Y_c)
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
     print "work over!"
 
 if __name__ == "__main__":
-
+    print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    print "training model..."
     project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,100)
+    print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
