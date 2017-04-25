@@ -41,10 +41,21 @@ export corpus_hu="/home/xfbai/corpus/monolingual/mono.tok.lc.hu"
 $word2vec/word2vec -train $corpus_hu -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.hu
 python $utils/Count.py -w1 $corpus_hu -o $temp/hu_wordCount.txt
 python $utils/Predeal.py -w1 $temp/embeddings_size200.hu -w2 $temp/hu_wordCount.txt -o $temp/new_embedding_size200.hu
-!
+
 
 export corpus_cs="/home/xfbai/corpus/monolingual/mono.tok.lc.cs"
 $word2vec/word2vec -train $corpus_cs -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.cs
 python $utils/Count.py -w1 $corpus_cs -o $temp/cs_wordCount.txt
 python $utils/Predeal.py -w1 $temp/embeddings_size200.cs -w2 $temp/cs_wordCount.txt -o $temp/new_embedding_size200.cs
+
+export corpus_ar="/home/xfbai/corpus/monolingual/mono.tok.lc.ar"
+$word2vec/word2vec -train $corpus_ar -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.ar
+python $utils/Count.py -w1 $corpus_ar -o $temp/ar_wordCount.txt
+python $utils/Predeal.py -w1 $temp/embeddings_size200.ar -w2 $temp/ar_wordCount.txt -o $temp/new_embedding_size200.ar
+!
+export corpus_ru="/home/xfbai/corpus/monolingual/mono.tok.lc.ru"
+$word2vec/word2vec -train $corpus_ru -window 5 -iter 10 -size 200 -threads 16 -output $temp/embeddings_size200.ru
+python $utils/Count.py -w1 $corpus_ru -o $temp/ru_wordCount.txt
+python $utils/Predeal.py -w1 $temp/embeddings_size200.ru -w2 $temp/ru_wordCount.txt -o $temp/new_embedding_size200.ru
+
 printf '\n\b\b\b\b\b\b\b\b%s\n' `date +%T`

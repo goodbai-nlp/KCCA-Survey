@@ -23,13 +23,17 @@ OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
+
 origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 outputEnFile = OutputDir+"KCCA_en_out.txt"
 outputForeignFile = OutputDir+"KCCA_foreign_out.txt"
 paramFile = OutputDir+"param.txt"
+
 def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForeignVecFile,outputEnFile,outputForeignFile,NUMCC=20):
     '''
     将词典的向量输入到KCCA中，生成投影向量，再生成双语向量
@@ -60,12 +64,14 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     resDict={}
-    for i in range(3,4):
-        for j in range(3,4):
+    for i in range(3,7):
+        for j in range(2,7):
             #tmpvec=[2,3,0.9,0.8]
             #for k in tmpvec[::]:
-            for k in range(1,2,1):
-                kcca=KCCA('rbf','rbf',regularization=10**-2,gamma1=10**-4,gamma2=10**-4,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
+            #if(i==3 and j<4):
+            #    continue
+            for k in range(1,7,1):
+                kcca=KCCA('rbf','rbf',regularization=10**-k,gamma1=10**-i,gamma2=10**-j,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
                 # print kcca.corrs
                 y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
                 origEnVecsProjected = preprocessing.scale(y1)
@@ -84,15 +90,16 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict de /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fi /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict hu /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ar /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ru /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 print b
                 print d
                 ff = open(paramFile,'a')
-                ttmpstr = str((10**-4,10**-4,10**-2))+' '+b+d+"\n"
+                ttmpstr = str((10**-i,10**-j,10**-k))+' '+b+d+"\n"
                 ff.write(ttmpstr)
                 ff.close()
     print "Work Finished"
-
 
 if __name__ == "__main__":
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
