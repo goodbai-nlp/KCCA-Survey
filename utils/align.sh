@@ -30,4 +30,4 @@ export ArWord="/home/xfbai/tmpvec/ar_wordCount.txt"
 export RuWord="/home/xfbai/tmpvec/ru_wordCount.txt"
 set -e
 echo "Aligning vectors..."
-python alignVectors.py -w1 $Ruvec -w2 $Envec -w3 $RuWord -w4 $EnWord -a $Rudict -o Out
+python alignVectors.py -w1 $Frvec -w2 $Envec -w3 $FrWord -w4 $EnWord -a $Frdict -o Out
