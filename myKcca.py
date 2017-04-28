@@ -21,7 +21,7 @@ class KCCA(object):
     https://github.com/lorenzoriano/PyKCCA.
     """
     def __init__(self,kernel1, kernel2, regularization, method = 'kettering_method',ftype = 'full',
-                 degree=3,gamma1=None,gamma2=None, coef0=1, n_jobs=1,n_components = 20):
+                 degree1=3,degree2=3,gamma1=None,gamma2=None, coef0=1, n_jobs=1,n_components = 20):
         if ftype not in ('full', 'icd'):
             raise ValueError("Error: valid decom values are full or icd, received: "+str(ftype))
 
@@ -32,7 +32,8 @@ class KCCA(object):
         self.gamma2 = gamma2
         self.coef0 = coef0
         self.n_jobs = n_jobs
-        self.degree = degree
+        self.degree1 = degree1
+        self.degree2 = degree2
         self.ftype = ftype
         self.n_components=n_components
         # self.method = getattr(self, ftype + "_" + method)
@@ -45,14 +46,15 @@ class KCCA(object):
         if ndata_x != ndata_y:
             raise Exception("Inequality of number of data between X and Y")
         if self.ftype == "full":
-            self.Kx = self._pairwise_kernels(self.kernel1,self.gamma1,X)
-            self.Ky = self._pairwise_kernels(self.kernel2,self.gamma2,Y)
+            self.Kx = self._pairwise_kernels(self.kernel1,self.degree1,self.gamma1,X)
+            self.Ky = self._pairwise_kernels(self.kernel2,self.degree2,self.gamma2,Y)
             (self.alpha, self.beta, self.corrs) = self.kcca(self.Kx, self.Ky)
             return self
 
 
-    def _pairwise_kernels(self,ikernel, igamma, X, Y=None):
-        return pairwise_kernels(X, Y,metric=ikernel, filter_params=True, n_jobs=self.n_jobs, degree=self.degree,
+    def _pairwise_kernels(self,ikernel, idegree,igamma, X, Y=None):
+        return pairwise_kernels(X, Y,metric=ikernel, filter_params=True, n_jobs=self.n_jobs,
+                                degree=idegree,
                                 gamma=igamma, coef0=self.coef0)
 
 
@@ -84,13 +86,13 @@ class KCCA(object):
         rets = []
         if X1 is not None:
 
-            Ktest = self._pairwise_kernels(self.kernel1,self.gamma1,X1, self.trainX)
+            Ktest = self._pairwise_kernels(self.kernel1,self.degree1,self.gamma1,X1, self.trainX)
             res1 = np.dot(Ktest, self.alpha)
             rets.append(res1)
 
         if X2 is not None:
 
-            Ktest = self._pairwise_kernels(self.kernel2,self.gamma1,X2, self.trainY)
+            Ktest = self._pairwise_kernels(self.kernel2,self.degree2,self.gamma1,X2, self.trainY)
             res2 = np.dot(Ktest, self.beta)
             rets.append(res2)
         return rets

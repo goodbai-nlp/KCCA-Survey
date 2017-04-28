@@ -64,28 +64,31 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     resDict={}
-    for i in range(3,4):
-        for j in range(2,3):
+    for degree1 in range(1,5):
+        for degree2 in range(1,5):
             #tmpvec=[2,3,0.9,0.8]
             #for k in tmpvec[::]:
             #if(i==3 and j<4):
             #    continue
-            for k in range(1,2,1):
-                kcca=KCCA('rbf','rbf',regularization=5*10**-4,gamma1=10**-4,gamma2=10**-4,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
-                # print kcca.corrs
-                y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
-                origEnVecsProjected = preprocessing.scale(y1)
-                origEnVecsProjected =np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-                origForeignVecsProjected = preprocessing.scale(y2)
-                origForeignVecsProjected = np.column_stack((tmp2[:, :1],origForeignVecsProjected.astype(np.str)))
-                np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
-                np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
-                a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/evalution/qvec/qvec_cca2.py')
-                score= float(b.strip().split()[-1])
-                if(score<0.3):
-                    print "score = ",score,"passed"
-                    continue
-                c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fr /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+            for gama1 in range(1,8,1):
+                for gama2 in range(1,8,1):
+                    for k in range(1,7,1):
+                        kcca=KCCA('poly','poly',regularization=10**-k,degree1=degree1,degree2
+                                  = degree2,gamma1=gama1*0.5,gamma2=gama2*0.5,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
+                        # print kcca.corrs
+                        y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
+                        origEnVecsProjected = preprocessing.scale(y1)
+                        origEnVecsProjected =np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
+                        origForeignVecsProjected = preprocessing.scale(y2)
+                        origForeignVecsProjected = np.column_stack((tmp2[:, :1],origForeignVecsProjected.astype(np.str)))
+                        np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
+                        np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
+                        a,b  =   commands.getstatusoutput( 'python /home/xfbai/mywork/git/KCCA-Experiment/evalution/qvec/qvec_cca2.py')
+                        score= float(b.strip().split()[-1])
+                        if(score<0.35):
+                            print "score = ",score,"passed"
+                            continue
+                        c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fr /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict zh /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict de /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fi /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
@@ -93,12 +96,12 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ar /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ru /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                print b
-                print d
-                ff = open(paramFile,'a')
-                ttmpstr = str((10**-4,10**-4,5*10**-4))+' '+b+d+"\n"
-                ff.write(ttmpstr)
-                ff.close()
+                        print b
+                        print d
+                        ff = open(paramFile,'a')
+                        ttmpstr = str((degree1,degree2,gama1*0.5,gama2*0.5,10**-k))+' '+b+d+"\n"
+                        ff.write(ttmpstr)
+                        ff.close()
     print "Work Finished"
 
 if __name__ == "__main__":
