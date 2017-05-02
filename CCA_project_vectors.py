@@ -14,12 +14,12 @@ import numpy as np
 import time
 from sklearn import preprocessing
 from sklearn.cross_decomposition import CCA
-
+import rcca
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
-# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
@@ -72,17 +72,23 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
 
     '''训练CCA'''
+    num = [NUMCC]
+    regs = [1e-1]
+    cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.1)
+    cca.train([subsetEnVecs, subsetForeignVecs])
+    '''
     cca = CCA(n_components=NUMCC)
     cca.fit(subsetEnVecs, subsetForeignVecs)
     print cca.get_params()
     X_c, Y_c = cca.transform(origEnVecs, origForeignVecs)
+    '''
     '''生成投影后的向量'''
-    #tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
-    #origEnVecsProjected = preprocessing.scale(tmpOutput[0])
-    origEnVecsProjected = preprocessing.scale(X_c)
+    tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
+    origEnVecsProjected = preprocessing.scale(tmpOutput[0])
+    #origEnVecsProjected = preprocessing.scale(X_c)
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    #origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
-    origForeignVecsProjected = preprocessing.scale(Y_c)
+    origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
+    #origForeignVecsProjected = preprocessing.scale(Y_c)
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
