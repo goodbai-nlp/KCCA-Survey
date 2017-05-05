@@ -17,16 +17,18 @@ from sklearn.cross_decomposition import CCA
 import rcca
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
-# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
-#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
+# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
 
 origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 '''
@@ -97,5 +99,6 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
 if __name__ == "__main__":
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
     print "training model..."
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile, outputEnFile,outputForeignFile,100)
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile,
+                    outputEnFile,outputForeignFile,20)
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
