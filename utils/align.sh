@@ -10,6 +10,7 @@ export Rudict="/home/xfbai/corpus/Bilingual_dict/google_dict.ru-en"
 
 export Frvec="/home/xfbai/tmpvec/new_embedding_size200.fr"
 export Zhvec="/home/xfbai/tmpvec/new_embedding_size200.zh"
+export Zhvec2="/home/xfbai/tmpvec/new_embedding_size40.zh"
 export Devec="/home/xfbai/tmpvec/new_embedding_size200.de"
 export Fivec="/home/xfbai/tmpvec/new_embedding_size200.fi"
 export Huvec="/home/xfbai/tmpvec/new_embedding_size200.hu"
@@ -18,6 +19,7 @@ export Arvec="/home/xfbai/tmpvec/new_embedding_size200.ar"
 export Ruvec="/home/xfbai/tmpvec/new_embedding_size200.ru"
 
 export Envec="/home/xfbai/tmpvec/new_embedding_size200.en"
+export Envec2="/home/xfbai/tmpvec/new_embedding_size40.en"
 
 export FrWord="/home/xfbai/tmpvec/fr_wordCount.txt"
 export ZhWord="/home/xfbai/tmpvec/zh_wordCount.txt"
@@ -30,4 +32,4 @@ export ArWord="/home/xfbai/tmpvec/ar_wordCount.txt"
 export RuWord="/home/xfbai/tmpvec/ru_wordCount.txt"
 set -e
 echo "Aligning vectors..."
-python alignVectors.py -w1 $Frvec -w2 $Envec -w3 $FrWord -w4 $EnWord -a $Frdict -o Out
+python alignVectors.py -w1 $Zhvec -w2 $Envec -w3 $ZhWord -w4 $EnWord -a $Zhdict -o Out

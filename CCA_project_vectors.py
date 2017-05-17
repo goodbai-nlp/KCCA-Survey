@@ -17,18 +17,18 @@ from sklearn.cross_decomposition import CCA
 import rcca
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
-# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
-# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
-# origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
-#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
 
 origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
-origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
+#origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 '''
@@ -68,10 +68,10 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = tmp4[:, 1:].astype(np.float)
 
     '''预处理，使每行正则化'''
-    origEnVecs=preprocessing.scale(origEnVecs)
-    origForeignVecs=preprocessing.scale(origForeignVecs)
-    subsetEnVecs = preprocessing.scale(subsetEnVecs)
-    subsetForeignVecs = preprocessing.scale(subsetForeignVecs)
+    #origEnVecs=preprocessing.normalize(origEnVecs)
+    #origForeignVecs=preprocessing.normalize(origForeignVecs)
+    subsetEnVecs = preprocessing.normalize(subsetEnVecs)
+    subsetForeignVecs = preprocessing.normalize(subsetForeignVecs)
 
     '''训练CCA'''
     num = [NUMCC]
@@ -86,11 +86,11 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     '''
     '''生成投影后的向量'''
     tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
-    origEnVecsProjected = preprocessing.scale(tmpOutput[0])
-    #origEnVecsProjected = preprocessing.scale(X_c)
+    origEnVecsProjected = preprocessing.normalize(tmpOutput[0])
+    #origEnVecsProjected = preprocessing.scale(tmpOutput[0])
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
-    #origForeignVecsProjected = preprocessing.scale(Y_c)
+    origForeignVecsProjected = preprocessing.normalize(tmpOutput[1])
+    #origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
     np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
@@ -99,6 +99,6 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
 if __name__ == "__main__":
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
     print "training model..."
-    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile, subsetForeignVecFile,
-                    outputEnFile,outputForeignFile,20)
+    project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile,
+                    subsetForeignVecFile,outputEnFile,outputForeignFile,100)
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))

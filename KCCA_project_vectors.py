@@ -19,8 +19,8 @@ from myKcca import KCCA
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
-#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
@@ -28,8 +28,8 @@ origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
 
-#origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
-origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
+origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
+#origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
 outputEnFile = OutputDir+"KCCA_en_out.txt"
@@ -59,8 +59,12 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = tmp4[:,1:].astype(np.float)
 
     '''预处理，使每行正则化'''
-    origEnVecs=preprocessing.scale(origEnVecs)
-    origForeignVecs=preprocessing.scale(origForeignVecs)
+    origEnVecs=preprocessing.normalize(origEnVecs)
+    origForeignVecs=preprocessing.normalize(origForeignVecs)
+    #origEnVecs=preprocessing.scale(origEnVecs)
+    #origForeignVecs=preprocessing.scale(origForeignVecs)
+    
+
 
     '''训练模型'''
     x1 = subsetEnVecs
@@ -70,19 +74,21 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
             #for k in tmpvec[::]:
             #if(i==3 and j<4):
             #    continue
-    for gama1 in range(2,6,1):
-        for gama2 in range(2,6,1):
+    for i in range(3,4,1):
+        for j in range(2,3,1):
             #tmpvec=[2,3,0.9,0.8]         
             #for k in tmpvec[::]:         
                 #if(i==3 and j<4):            
                 #    continue
-            for k in range(1,6,1):
-                        kcca=KCCA('rbf','rbf',regularization=10**-k,gamma1=10**-gama1,gamma2=10**-gama2,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
+            for k in range(1,2,1):
+                        kcca=KCCA('rbf','rbf',regularization=10**-4,gamma1=10**-2,gamma2=10**-3,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
                         # print kcca.corrs
                         y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
-                        origEnVecsProjected = preprocessing.scale(y1)
+                        origEnVecsProjected = preprocessing.normalize(y1)
+                        #origEnVecsProjected = preprocessing.scale(y1)
                         origEnVecsProjected =np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-                        origForeignVecsProjected = preprocessing.scale(y2)
+                        origForeignVecsProjected = preprocessing.normalize(y2)
+                        #origForeignVecsProjected = preprocessing.scale(y2)
                         origForeignVecsProjected = np.column_stack((tmp2[:, :1],origForeignVecsProjected.astype(np.str)))
                         np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
                         np.savetxt(outputForeignFile,origForeignVecsProjected,fmt="%s",delimiter=' ')
@@ -93,16 +99,16 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
                             continue
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fr /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         c,d = commands.getstatusoutput('bash run.sh evaluateBiDict zh /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #        c,d = commands.getstatusoutput('bash run.sh evaluateBiDict de /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict de /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fi /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                 #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict hu /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ar /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ru /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ar /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ru /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         print b
                         print d
                         ff = open(paramFile,'a')
-                        ttmpstr = str((10**-gama1,10**-gama2,10**-k))+' '+b+d+"\n"
+                        ttmpstr = str((10**-i,10**-j,10**-k))+' '+b+d+"\n"
                         ff.write(ttmpstr)
                         ff.close()
     print "Work Finished"
@@ -111,5 +117,5 @@ if __name__ == "__main__":
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
     print "training model..."
     project_vectors(origForeignVecFile, origEnVecFile, subsetEnVecFile,
-                    subsetForeignVecFile,outputEnFile,outputForeignFile,20)
+                    subsetForeignVecFile,outputEnFile,outputForeignFile,100)
     print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))

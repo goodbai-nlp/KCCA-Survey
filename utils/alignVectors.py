@@ -23,13 +23,14 @@ def read_word_vectors(filename,wordCountFile):
   for lineNum, line in enumerate(fileObject):
     line = line.strip().lower()
     word = line.split()[0]
-    if(wordDict.has_key(word) and wordDict[word]>500):
+    if(wordDict.has_key(word) and wordDict[word]>300):
   	wordVectors[word] = numpy.zeros(len(line.split())-1, dtype=float)
   	for index, vecVal in enumerate(line.split()[1:]):
     		wordVectors[word][index] = float(vecVal)
         # normalize weight vector 
-  	# wordVectors[word] /= math.sqrt((wordVectors[word]**2).sum() + 1e-6)
-        wordVectors[word]=preprocessing.scale(wordVectors[word])  
+  	wordVectors[word] /= math.sqrt((wordVectors[word]**2).sum() + 1e-6)
+        #wordVectors[word]=preprocessing.normalize(wordVectors[word])
+        #wordVectors[word]=preprocessing.scale(wordVectors[word])  
   sys.stderr.write("Vectors read from: "+filename+" \n")
   return wordVectors
 
