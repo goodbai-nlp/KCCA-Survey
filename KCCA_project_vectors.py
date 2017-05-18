@@ -14,7 +14,7 @@ import numpy as np
 import time
 import commands
 from sklearn import preprocessing
-from myKcca import KCCA
+from Kcca import KCCA
 
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
@@ -70,19 +70,10 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     x1 = subsetEnVecs
     x2 = subsetForeignVecs
     resDict={}
-            #tmpvec=[2,3,0.9,0.8]
-            #for k in tmpvec[::]:
-            #if(i==3 and j<4):
-            #    continue
     for i in range(3,4,1):
         for j in range(2,3,1):
-            #tmpvec=[2,3,0.9,0.8]         
-            #for k in tmpvec[::]:         
-                #if(i==3 and j<4):            
-                #    continue
             for k in range(1,2,1):
                         kcca=KCCA('rbf','rbf',regularization=10**-4,gamma1=10**-2,gamma2=10**-3,n_jobs=-1,n_components=NUMCC).fit(x1,x2)
-                        # print kcca.corrs
                         y1, y2 = kcca.transform(origEnVecs, origForeignVecs)
                         origEnVecsProjected = preprocessing.normalize(y1)
                         #origEnVecsProjected = preprocessing.scale(y1)
@@ -100,8 +91,8 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fr /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         c,d = commands.getstatusoutput('bash run.sh evaluateBiDict zh /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict de /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fi /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
-                #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict hu /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict fi /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
+                        #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict hu /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict cs /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ar /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
                         #c,d = commands.getstatusoutput('bash run.sh evaluateBiDict ru /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_en_out.txt /home/xfbai/mywork/git/KCCA-Experiment/Output/KCCA_foreign_out.txt')
