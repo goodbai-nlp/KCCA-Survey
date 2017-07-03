@@ -14,34 +14,27 @@ import numpy as np
 import time
 from sklearn import preprocessing
 from sklearn.cross_decomposition import CCA
-import rcca
+#import rcca
 datadir = "/home/xfbai/mywork/git/KCCA-Experiment/data/"
 OutputDir="/home/xfbai/mywork/git/KCCA-Experiment/Output/"
+#初始词单语向量矩阵
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fr"
-#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
+origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.zh"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size40.zh"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.de"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.fi"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.hu"
 # origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.cs"
 #origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ar"
-origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
+#origForeignVecFile = "/home/xfbai/tmpvec/new_embedding_size200.ru"
 
 origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size200.en"
 #origEnVecFile = "/home/xfbai/tmpvec/new_embedding_size40.en"
+
+#训练用词向量矩阵---种子词典矩阵
 subsetEnVecFile = datadir+"Out_en_new_aligned.txt"
 subsetForeignVecFile = datadir+"Out_foreign_new_aligned.txt"
-'''
-datadir = "/home/jackbai/mywork/Git/KCCA-Experiment/data/"
-OutputDir="/home/jackbai/mywork/Git/KCCA-Experiment/Output/"
-origForeignVecFile = datadir+"de-sample.txt"
-origForeignVecFileNew = datadir+"new_de-sample.txt"
-origEnVecFile = datadir+"en-sample.txt"
-origEnVecFileNew = datadir+"new_en-sample.txt"
-subsetEnVecFile = datadir+"en_new_aligned.txt"
-subsetForeignVecFile = datadir+"de_new_aligned.txt"
->>>>>>> 51cca56a78373b6886fd01b7b6b2ff0e5c7cbdd7
-'''
+
 outputEnFile = OutputDir+"CCA_en_out.txt"
 outputForeignFile = OutputDir+"CCA_foreign_out.txt"
 
@@ -74,6 +67,7 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     subsetForeignVecs = preprocessing.normalize(subsetForeignVecs)
 
     '''训练CCA'''
+    '''
     num = [NUMCC]
     regs = [1e-1]
     cca = rcca.CCACrossValidate(regs=regs,numCCs=num,kernelcca=False,cutoff=0.1)
@@ -83,13 +77,12 @@ def project_vectors(origForeignVecFile,origEnVecFile,subsetEnVecFile,subsetForei
     cca.fit(subsetEnVecs, subsetForeignVecs)
     print cca.get_params()
     X_c, Y_c = cca.transform(origEnVecs, origForeignVecs)
-    '''
     '''生成投影后的向量'''
-    tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
-    origEnVecsProjected = preprocessing.normalize(tmpOutput[0])
+    #tmpOutput = rcca._listdot([d.T for d in [origEnVecs, origForeignVecs]], cca.ws)
+    origEnVecsProjected = preprocessing.normalize(X_c)
     #origEnVecsProjected = preprocessing.scale(tmpOutput[0])
     origEnVecsProjected = np.column_stack((tmp[:,:1],origEnVecsProjected.astype(np.str)))
-    origForeignVecsProjected = preprocessing.normalize(tmpOutput[1])
+    origForeignVecsProjected = preprocessing.normalize(Y_c)
     #origForeignVecsProjected = preprocessing.scale(tmpOutput[1])
     origForeignVecsProjected = np.column_stack((tmp2[:, :1], origForeignVecsProjected.astype(np.str)))
     np.savetxt(outputEnFile,origEnVecsProjected,fmt="%s",delimiter=' ')
